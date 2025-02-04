@@ -13,7 +13,7 @@ class StockModel(BaseModel):
         return value.upper()
 
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 from markupsafe import escape
 import secrets
 
@@ -55,7 +55,7 @@ def add_stock():
             session['stock_symbol'] = stock_data.stock_symbol
             session['number_of_shares'] = stock_data.number_of_shares
             session['purchase_price'] = stock_data.purchase_price
-
+            return redirect(url_for('list_stocks'))
         except ValidationError as e:
             print(e)
 
