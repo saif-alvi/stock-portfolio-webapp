@@ -2,17 +2,25 @@
 <html lang="en">
   <head>
     <!-- Required meta tags -->
+
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Flask Stock Portfolio App</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base_style.css')}}">
+    {% block styling %}
+    {% endblock %}
+  
   </head>
 
   <body>
-    <header>
-      <h1>Flask Stock Portfolio App</h1>
+    <header class="site-header">
+      <nav class="nav">
+        <a class="nav-link logo">Flask Stock Portfolio App</a>
+      </nav>
     </header>
 
-    <main>
+    <main class="content">
       <!-- child template -->
       {% block content %}
       {% endblock %}
