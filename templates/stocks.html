@@ -1,26 +1,30 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div>
-    <h1>List of Stocks</h1>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/stocks_style.css') }}">
+<div class="stocks-container">
+    <div class="stocks-list">
+        <h1>List of Stocks</h1>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Stock Symbol</th>
-                <th>Number of Shares</th>
-                <th>Purchase Price</th>
-            </tr>
-        </thead>
+        <table>
+            <thead>
+                <tr>
+                    <th>Stock Symbol</th>
+                    <th>Number of Shares</th>
+                    <th>Purchase Price ($)</th>
+                </tr>
+            </thead>
 
 
-    <tbody>
-        <td>{{session['stock_symbol']}}</td>
-        <td>{{session['number_of_shares']}}</td>
-        <td>{{session['purchase_price']}}</td>
-    </tbody>
-    </table>
-
+            <tbody>
+                <tr>
+                    <td>{{session['stock_symbol']}}</td>
+                    <td>{{session['number_of_shares']}}</td>
+                    <td>{{session['purchase_price']}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}
 
