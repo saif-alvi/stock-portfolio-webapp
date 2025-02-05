@@ -1,0 +1,14 @@
+Starting the Flask Stock Portfolio App...
+Starting the Flask Stock Portfolio App...
+2025-02-05 16:26:02,446 INFO: Starting the Flask Stock Portfolio App... [in app.py:23]
+2025-02-05 16:27:00,897 INFO: Starting the Flask Stock Portfolio App... [in app.py:23]
+2025-02-05 16:27:01,403 INFO: Starting the Flask Stock Portfolio App... [in app.py:23]
+2025-02-05 16:27:32,017 INFO: Starting the Flask Stock Portfolio App... [in app.py:24]
+2025-02-05 16:29:19,399 INFO: Starting the Flask Stock Portfolio App... [in app.py:25]
+2025-02-05 16:29:30,382 INFO: Starting the Flask Stock Portfolio App... [in app.py:25]
+2025-02-05 16:29:34,129 INFO: Starting the Flask Stock Portfolio App... [in app.py:26]
+2025-02-05 16:29:37,808 INFO: Starting the Flask Stock Portfolio App... [in app.py:25]
+2025-02-05 16:31:21,746 INFO: Starting the Flask Stock Portfolio App... [in app.py:26]
+2025-02-05 17:00:07,837 INFO: Starting the Flask Stock Portfolio App... [in app.py:27]
+2025-02-05 17:00:11,545 INFO: Calling the index() function. [in app.py:38]
+2025-02-05 17:00:23,503 INFO: Added new stock (AAPL)! [in app.py:72]
