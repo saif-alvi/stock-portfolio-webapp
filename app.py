@@ -13,7 +13,7 @@ class StockModel(BaseModel):
         return value.upper()
 
 
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash
 from markupsafe import escape
 import secrets
 
@@ -29,6 +29,7 @@ def index():
 @app.route('/about')
 def about():
     # return render_template('about.html', company_name="TestDriven.io")
+    flash('Thanks for being a user!', 'info')
     return render_template('about.html', company_name='Saif Alvi')
 
 @app.route('/stocks/')
@@ -55,6 +56,8 @@ def add_stock():
             session['stock_symbol'] = stock_data.stock_symbol
             session['number_of_shares'] = stock_data.number_of_shares
             session['purchase_price'] = stock_data.purchase_price
+            flash(f"Added new stock ({stock_data.stock_symbol})!", 'success')
+
             return redirect(url_for('list_stocks'))
         except ValidationError as e:
             print(e)
