@@ -27,6 +27,8 @@ app.logger.addHandler(file_handler)
 app.logger.info('Starting the Flask Stock Portfolio App...')
 
 
+
+from flask import Flask, render_template, request, redirect, url_for, flash
 from markupsafe import escape
 import secrets
 
@@ -42,6 +44,7 @@ def index():
 @app.route('/about')
 def about():
     # return render_template('about.html', company_name="TestDriven.io")
+    flash('Thanks for being a user!', 'info')
     return render_template('about.html', company_name='Saif Alvi')
 
 @app.route('/stocks/')
@@ -68,6 +71,7 @@ def add_stock():
             session['stock_symbol'] = stock_data.stock_symbol
             session['number_of_shares'] = stock_data.number_of_shares
             session['purchase_price'] = stock_data.purchase_price
+            flash(f"Added new stock ({stock_data.stock_symbol})!", 'success')
 
             app.logger.info(f"Added new stock ({request.form['stock_symbol']})!")
 
