@@ -1,2 +1,6 @@
 venv/
+instance/*.cfg
+instance/*.db
+instance/*.log
+instance/*.log*
 *.log
