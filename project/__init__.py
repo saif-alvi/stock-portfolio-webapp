@@ -15,6 +15,7 @@ def create_app():
 
     register_blueprints(app)
     configure_logging(app)
+    register_app_callbacks(app)
     return app
 
 def register_blueprints(app):
@@ -39,3 +40,23 @@ def configure_logging(app):
     file_handler.setLevel(logging.INFO)
     app.logger.addHandler(file_handler)
     app.logger.info('Starting the Flask Stock Portfolio App...')
+
+
+def register_app_callbacks(app):
+    
+    @app.before_request
+    def app_before_request():
+        app.logger.info('Calling before_request() for the Flask application...')
+    
+    @app.after_request
+    def app_after_request(response):
+        app.logger.info('Calling after_request() for the Flask application...')
+        return response
+    
+    @app.teardown_request
+    def app_teardown_request(error=None):
+        app.logger.info('Calling teardown_request() for the Flask application...')
+    
+    @app.teardown_appcontext
+    def app_teardown_appcontext(error=None):
+        app.logger.info('Calling teardown_appcontext() for the Flask application...')

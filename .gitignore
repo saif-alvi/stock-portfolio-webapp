@@ -4,3 +4,4 @@ instance/*.db
 instance/*.log
 instance/*.log*
 *.log
+__pycache__/
