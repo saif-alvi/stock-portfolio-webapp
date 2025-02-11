@@ -4,7 +4,7 @@ import pytest
 Unit tests for app.py
 
 """
-from app import StockModel
+from project.stocks.routes import StockModel
 
 
 def test_validate_stock_data_nominal():
