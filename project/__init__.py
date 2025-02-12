@@ -2,7 +2,26 @@ from flask import Flask, render_template
 import logging
 from logging.handlers import RotatingFileHandler
 from flask.logging import default_handler
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import MetaData
 import os
+
+# Helper Functions
+def initialize_extensions(app):
+    database.init_app(app)
+
+#DataBase naming Convention:
+
+convention = {
+    "ix": 'ix_%(column_0_label)s',
+    "uq": "uq_%(table_name)s_%(column_0_name)s",
+    "ck": "ck_%(table_name)s_%(constraint_name)s",
+    "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
+    "pk": "pk_%(table_name)s"
+}
+metadata = MetaData(naming_convention=convention)
+database = SQLAlchemy(metadata=metadata)
+
 
 def create_app():
     # Create the Flask application
@@ -12,7 +31,7 @@ def create_app():
     config_type = os.getenv('CONFIG_TYPE', default='config.DevelopmentConfig')
     app.config.from_object(config_type)
 
-
+    initialize_extensions(app)
     register_blueprints(app)
     configure_logging(app)
     register_app_callbacks(app)
