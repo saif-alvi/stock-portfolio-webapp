@@ -43,7 +43,9 @@ def index():
 
 @stocks_blueprint.route('/stocks/')
 def list_stocks():
-    return render_template('stocks/stocks.html')
+    query = database.select(Stock).order_by(Stock.id)
+    stocks = database.session.execute(query).scalars().all()
+    return render_template('stocks/stocks.html', stocks=stocks)
 
 @stocks_blueprint.route('/add_stock', methods=['GET', 'POST'])
 def add_stock():
