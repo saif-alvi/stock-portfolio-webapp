@@ -1,6 +1,8 @@
 from . import stocks_blueprint
 from flask import current_app, render_template, request, session, flash, redirect, url_for
 from pydantic import BaseModel, field_validator, ValidationError
+from project.models import Stock
+from project import database
 
 
 
@@ -52,9 +54,13 @@ def add_stock():
             stock_data = StockModel(stock_symbol = request.form['stock_symbol'], number_of_shares=request.form['number_of_shares'], purchase_price=request.form['purchase_price'])
             print(stock_data)
 
-            session['stock_symbol'] = stock_data.stock_symbol
-            session['number_of_shares'] = stock_data.number_of_shares
-            session['purchase_price'] = stock_data.purchase_price
+            new_stock = Stock(stock_data.stock_symbol,
+            stock_data.number_of_shares,
+            stock_data.purchase_price)
+            database.session.add(new_stock)
+            database.session.commit()
+
+
             flash(f"Added new stock ({stock_data.stock_symbol})!", 'success')
 
             current_app.logger.info(f"Added new stock ({request.form['stock_symbol']})!")
