@@ -3,6 +3,7 @@ from flask import current_app, render_template, request, session, flash, redirec
 from pydantic import BaseModel, field_validator, ValidationError
 from project.models import Stock
 from project import database
+import click
 
 
 
@@ -75,4 +76,26 @@ def add_stock():
     return render_template('stocks/add_stock.html')
 
 
+#------------------CLI COMMANDS-------------------------------------------
+
+@stocks_blueprint.cli.command('create_default_set')
+def create_default_set():
+    "create 3 new stocks and add to database"
+    stock1 = Stock('HD', '25', '247.29')
+    stock2 = Stock('TWTR', '230', '31.89')
+    stock3 = Stock('DIS', '65', '118.77')
+    database.session.add(stock1)
+    database.session.add(stock2)
+    database.session.add(stock3)
+    database.session.commit()
+
+@stocks_blueprint.cli.command('create')
+@click.argument('symbol')
+@click.argument('number_of_shares')
+@click.argument('purchase_price')
+def create(symbol, number_of_shares, purchase_price):
+    """Create a new stock and add it to the database"""
+    stock = Stock(symbol, number_of_shares, purchase_price)
+    database.session.add(stock)
+    database.session.commit()
 
