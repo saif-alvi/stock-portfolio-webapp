@@ -9,6 +9,7 @@ class Config(object):
     SECRET_KEY = os.getenv('SECRET_KEY', default='BAD_SECRET_KEY')
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', default=f"sqlite:///{os.path.join(BASEDIR, 'instance', 'app.db')}")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    WTF_CSRF_ENABLED = False
 
 class ProductionConfig(Config):
     FLASK_ENV = 'production'
