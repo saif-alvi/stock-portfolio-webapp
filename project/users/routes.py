@@ -77,3 +77,8 @@ def logout():
     logout_user()
     flash('Goodbye!')
     return redirect(url_for('stocks.index'))
+
+@users_blueprint.route('/profile')
+@login_required
+def user_profile():
+    return render_template('users/profile.html')
