@@ -6,6 +6,9 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
 import os
 from flask_migrate import Migrate
+from flask_login import LoginManager
+from flask_wtf.csrf import CSRFProtect
+
 
 
 def create_app():
@@ -39,6 +42,9 @@ convention = {
 metadata = MetaData(naming_convention=convention)
 database = SQLAlchemy(metadata=metadata)
 db_migration = Migrate()
+csrf_protection = CSRFProtect()
+login = LoginManager()            
+login.login_view = "users.login"
 # --------------------
 
 
@@ -46,7 +52,17 @@ db_migration = Migrate()
 def initialize_extensions(app):
     database.init_app(app)
     db_migration.init_app(app,database)
+    csrf_protection.init_app(app)
 
+    login.init_app(app)
+
+    # Flask-Login configuration
+    from project.models import User
+
+    @login.user_loader
+    def load_user(user_id):
+        query = database.select(User).where(User.id == int(user_id))
+        return database.session.execute(query).scalar_one()
 
 
 
