@@ -4,6 +4,12 @@ from .forms import RegistrationForm
 from project.models import User
 from project import database
 from sqlalchemy.exc import IntegrityError
+from markupsafe import escape
+
+
+@users_blueprint.route('/hello/<path:message>')
+def print_path(message):
+    return f'<h1>Path provided: {escape(message)}!</h1>'
 
 @users_blueprint.route('/about')
 def about():

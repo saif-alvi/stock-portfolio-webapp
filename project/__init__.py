@@ -6,6 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
 import os
 from flask_migrate import Migrate
+from flask_wtf.csrf import CSRFProtect
 
 
 def create_app():
@@ -39,6 +40,7 @@ convention = {
 metadata = MetaData(naming_convention=convention)
 database = SQLAlchemy(metadata=metadata)
 db_migration = Migrate()
+csrf_protection = CSRFProtect()
 # --------------------
 
 
@@ -46,7 +48,7 @@ db_migration = Migrate()
 def initialize_extensions(app):
     database.init_app(app)
     db_migration.init_app(app,database)
-
+    csrf_protection.init_app(app)
 
 
 
