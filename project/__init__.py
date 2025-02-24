@@ -7,6 +7,8 @@ from sqlalchemy import MetaData
 import os
 from flask_migrate import Migrate
 from flask_wtf.csrf import CSRFProtect
+from flask_login import LoginManager
+from sqlalchemy.exc import NoResultFound
 
 
 def create_app():
@@ -41,6 +43,8 @@ metadata = MetaData(naming_convention=convention)
 database = SQLAlchemy(metadata=metadata)
 db_migration = Migrate()
 csrf_protection = CSRFProtect()
+login = LoginManager()            
+login.login_view = "users.login"
 # --------------------
 
 
@@ -49,7 +53,22 @@ def initialize_extensions(app):
     database.init_app(app)
     db_migration.init_app(app,database)
     csrf_protection.init_app(app)
+    login.init_app(app)
 
+    # Flask-Login configuration
+    from project.models import User
+
+    @login.user_loader
+    def load_user(user_id):
+        try:
+            print(f"Loading user with ID: {user_id}")  # Debugging statement
+            user = database.session.query(User).filter(User.id == int(user_id)).one()
+            print(f"Loaded user: {user}")  # Debugging statement
+            print(f"User ID: {user.id}")  # Debugging statement
+            return user
+        except NoResultFound:
+            print(f"No user found with ID: {user_id}")  # Debugging statement
+            return None
 
 
 
