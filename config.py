@@ -1,4 +1,5 @@
 import os, secrets
+from datetime import timedelta
 
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
 
@@ -10,6 +11,7 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', default=f"sqlite:///{os.path.join(BASEDIR, 'instance', 'app.db')}")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     WTF_CSRF_ENABLED = False
+    REMEMBER_COOKIE_DURATION = timedelta(days=10)
 
 class ProductionConfig(Config):
     FLASK_ENV = 'production'

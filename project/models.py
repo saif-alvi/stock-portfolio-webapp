@@ -3,7 +3,7 @@ from sqlalchemy import Integer, String
 from sqlalchemy.orm import mapped_column
 from project import database
 from werkzeug.security import generate_password_hash, check_password_hash
-
+import flask_login
 
 
 class Stock(database.Model):
@@ -39,7 +39,7 @@ class Stock(database.Model):
     
 
 
-class User(database.Model):
+class User(flask_login.UserMixin, database.Model):
     """
     Class that represents a user of the application
 
@@ -68,3 +68,5 @@ class User(database.Model):
 
     def __repr__(self):
         return f'<User: {self.email}>'
+    
+
