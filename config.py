@@ -12,6 +12,14 @@ class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     WTF_CSRF_ENABLED = False
     REMEMBER_COOKIE_DURATION = timedelta(days=10)
+    # Flask-Mail Configuration
+    MAIL_SERVER = 'smtp.googlemail.com'
+    MAIL_PORT = 465
+    MAIL_USE_TLS = False
+    MAIL_USE_SSL = True
+    MAIL_USERNAME = os.getenv('MAIL_USERNAME', default='')
+    MAIL_PASSWORD = os.getenv('MAIL_PASSWORD', default='')
+    MAIL_DEFAULT_SENDER = os.getenv('MAIL_USERNAME', default='')
 
 class ProductionConfig(Config):
     FLASK_ENV = 'production'

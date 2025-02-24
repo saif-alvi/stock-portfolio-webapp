@@ -8,7 +8,10 @@ from markupsafe import escape
 from .forms import RegistrationForm, LoginForm
 from flask_login import login_user, current_user, login_required, logout_user
 from urllib.parse import urlparse
-
+from project import database, mail
+from flask_mail import Message
+from flask import copy_current_request_context
+from threading import Thread
 
 @users_blueprint.route('/hello/<path:message>')
 def print_path(message):
@@ -29,6 +32,9 @@ def page_forbidden(e):
 def admin():
     abort(403)
 
+
+
+
 @users_blueprint.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
@@ -41,14 +47,27 @@ def register():
                 database.session.commit()
                 flash(f'Thanks for registering, {new_user.email}!')
                 current_app.logger.info(f'Registered new user: {form.email.data}!')
-                return redirect(url_for('stocks.index'))
+
+                @copy_current_request_context
+                def send_email(message):
+                    with current_app.app_context():
+                        mail.send(message)
+
+                # Send an email confirming the new registration
+                msg = Message(subject='Registration - Flask Stock Portfolio App',
+                              body='Thanks for registering with the Flask Stock Portfolio App!',
+                              recipients=[form.email.data])
+                email_thread = Thread(target=send_email, args=[msg])
+                email_thread.start()
+
+                return redirect(url_for('users.login'))
             except IntegrityError:
                 database.session.rollback()
                 flash(f'ERROR! Email ({form.email.data}) already exists.', 'error')
         else:
             flash(f"Error in form data!")
 
-    return render_template('users/register.html', form=form)
+    return render_template('users/register.html', form=form)                                                                                                                                                    
 
 @users_blueprint.route('/login', methods=['GET', 'POST'])
 def login():
