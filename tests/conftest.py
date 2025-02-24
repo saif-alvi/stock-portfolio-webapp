@@ -10,6 +10,7 @@ from project.models import Stock, User
 def test_client():
     os.environ['CONFIG_TYPE'] = 'config.TestingConfig' # set testing config
     flask_app = create_app()
+    flask_app.extensions['mail'].suppress = True  # NEW!!
 
     # Create a test client using the Flask application configured for testing
     with flask_app.test_client() as testing_client:
