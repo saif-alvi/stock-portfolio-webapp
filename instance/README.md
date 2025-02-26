@@ -1,1 +1,0 @@
-This folder is used to store runtime data like logs and database files.

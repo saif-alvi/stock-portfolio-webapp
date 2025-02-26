@@ -1,10 +1,10 @@
 from project import database
-from sqlalchemy import Integer, String
+from sqlalchemy import Integer, String, DateTime, Boolean
 from sqlalchemy.orm import mapped_column
 from project import database
 from werkzeug.security import generate_password_hash, check_password_hash
 import flask_login
-
+from datetime import datetime
 
 class Stock(database.Model):
     """
@@ -54,10 +54,18 @@ class User(flask_login.UserMixin, database.Model):
     id = mapped_column(Integer(), primary_key=True)
     email = mapped_column(String(), unique=True)
     password_hashed = mapped_column(String(128))
+    registered_on = mapped_column(DateTime())                 
+    email_confirmation_sent_on = mapped_column(DateTime())     
+    email_confirmed = mapped_column(Boolean(), default=False)  
+    email_confirmed_on = mapped_column(DateTime())             
 
     def __init__(self, email: str, password_plaintext: str):
         self.email = email
         self.password_hashed = self._generate_password_hash(password_plaintext)
+        self.registered_on = datetime.now()
+        self.email_confirmation_sent_on = datetime.now()
+        self.email_confirmed = False
+        self.email_confirmed_on = None
 
     def is_password_correct(self, password_plaintext: str):
         return check_password_hash(self.password_hashed, password_plaintext)
