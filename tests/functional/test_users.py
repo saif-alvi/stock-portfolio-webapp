@@ -542,10 +542,10 @@ def test_get_resend_email_confirmation_logged_in(test_client, log_in_default_use
     with mail.record_messages() as outbox:
         response = test_client.get('/users/resend_email_confirmation', follow_redirects=True)
         assert response.status_code == 200
-        assert b'Email sent to confirm your email address. Please check your email!' in response.data
+        assert b'Email sent to confirm your email address.  Please check your email!' in response.data
         assert len(outbox) == 1
         assert outbox[0].subject == 'Flask Stock Portfolio App - Confirm Your Email Address'
-        assert outbox[0].sender == 'flaskstockportfolioapp@gmail.com'
+        assert outbox[0].sender == 'saifalviproject1@gmail.com'
         assert outbox[0].recipients[0] == 'patrick@gmail.com'
         assert 'http://localhost/users/confirm/' in outbox[0].html
 
