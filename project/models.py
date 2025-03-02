@@ -77,4 +77,7 @@ class User(flask_login.UserMixin, database.Model):
     def __repr__(self):
         return f'<User: {self.email}>'
     
+    def set_password(self, password_plaintext: str):
+        self.password_hashed = self._generate_password_hash(password_plaintext)
+    
 
