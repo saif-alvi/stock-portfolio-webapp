@@ -5,6 +5,8 @@ from project import database
 from werkzeug.security import generate_password_hash, check_password_hash
 import flask_login
 from datetime import datetime
+from sqlalchemy import Integer, String, DateTime, Boolean, ForeignKey
+from sqlalchemy.orm import mapped_column, relationship
 
 class Stock(database.Model):
     """
@@ -28,11 +30,17 @@ class Stock(database.Model):
     stock_symbol = mapped_column(String())
     number_of_shares = mapped_column(Integer())
     purchase_price = mapped_column(Integer())
+    user_id = mapped_column(ForeignKey('users.id'))
+    purchase_date = mapped_column(DateTime())
+    
+    user_relationship = relationship('User', back_populates='stocks_relationship')  
 
-    def __init__(self, stock_symbol: str, number_of_shares: str, purchase_price: str):
+    def __init__(self, stock_symbol: str, number_of_shares: str, purchase_price: str, user_id: str, purchase_date=None):
         self.stock_symbol = stock_symbol
         self.number_of_shares = int(number_of_shares)
         self.purchase_price = int(float(purchase_price) * 100)
+        self.user_id = user_id
+        self.purchase_date = purchase_date
 
     def __repr__(self):
         return f'{self.stock_symbol} - {self.number_of_shares} shares purchased at ${self.purchase_price / 100}'
@@ -57,7 +65,9 @@ class User(flask_login.UserMixin, database.Model):
     registered_on = mapped_column(DateTime())                 
     email_confirmation_sent_on = mapped_column(DateTime())     
     email_confirmed = mapped_column(Boolean(), default=False)  
-    email_confirmed_on = mapped_column(DateTime())             
+    email_confirmed_on = mapped_column(DateTime())
+
+    stocks_relationship = relationship('Stock', back_populates='user_relationship')
 
     def __init__(self, email: str, password_plaintext: str):
         self.email = email
