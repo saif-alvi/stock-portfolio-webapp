@@ -6,7 +6,7 @@ from project import database
 import click
 from flask_login import login_required, current_user
 from datetime import datetime
-
+from flask import render_template, request, redirect, url_for, flash, current_app, abort
 
 
 @stocks_blueprint.before_request
@@ -47,9 +47,17 @@ def index():
 @stocks_blueprint.route('/stocks/')
 @login_required
 def list_stocks():
-    query = database.select(Stock).order_by(Stock.id)
+    query = database.select(Stock).where(Stock.user_id == current_user.id).order_by(Stock.id)
     stocks = database.session.execute(query).scalars().all()
-    return render_template('stocks/stocks.html', stocks=stocks)
+
+    current_account_value = 0.0
+    for stock in stocks:
+        stock.get_stock_data()
+        database.session.add(stock)
+        current_account_value += stock.get_stock_position_value()
+
+    database.session.commit()
+    return render_template('stocks/stocks.html', stocks=stocks, value=round(current_account_value, 2))
 
 @stocks_blueprint.route('/add_stock', methods=['GET', 'POST'])
 @login_required
@@ -105,3 +113,47 @@ def create(symbol, number_of_shares, purchase_price):
     database.session.add(stock)
     database.session.commit()
 
+
+@stocks_blueprint.route("/chartjs_demo1")
+def chartjs_demo1():
+    return render_template('stocks/chartjs_demo1.html')
+
+@stocks_blueprint.route("/chartjs_demo2")
+def chartjs_demo2():
+    title = 'Monthly Data'
+    labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August']
+    values = [10.3, 9.2, 8.7, 7.1, 6.0, 4.4, 7.6, 8.9]
+    return render_template('stocks/chartjs_demo2.html', values=values, labels=labels, title=title)
+
+@stocks_blueprint.route("/chartjs_demo3")
+def chartjs_demo3():
+    title = 'Daily Prices'
+    labels = [datetime(2020, 2, 10),   # Monday 2/10/2020
+              datetime(2020, 2, 11),   # Tuesday 2/11/2020
+              datetime(2020, 2, 12),   # Wednesday 2/12/2020
+              datetime(2020, 2, 13),   # Thursday 2/13/2020
+              datetime(2020, 2, 14),   # Friday 2/14/2020
+              datetime(2020, 2, 17),   # Monday 2/17/2020
+              datetime(2020, 2, 18),   # Tuesday 2/18/2020
+              datetime(2020, 2, 19)]   # Wednesday 2/19/2020
+    values = [10.3, 9.2, 8.7, 7.1, 6.0, 4.4, 7.6, 8.9]
+    return render_template('stocks/chartjs_demo3.html', values=values, labels=labels, title=title)
+
+
+
+
+
+@stocks_blueprint.route('/stocks/<id>')
+@login_required
+def stock_details(id):
+    query = database.select(Stock).where(Stock.id == id)
+    stock = database.session.execute(query).scalar_one_or_none()
+
+    if stock is None:
+        abort(404)
+
+    if stock.user_id != current_user.id:
+        abort(403)
+
+    title, labels, values = stock.get_weekly_stock_data()
+    return render_template('stocks/stock_details.html', stock=stock, title=title, labels=labels, values=values)
