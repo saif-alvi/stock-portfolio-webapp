@@ -47,9 +47,17 @@ def index():
 @stocks_blueprint.route('/stocks/')
 @login_required
 def list_stocks():
-    query = database.select(Stock).order_by(Stock.id)
+    query = database.select(Stock).where(Stock.user_id == current_user.id).order_by(Stock.id)
     stocks = database.session.execute(query).scalars().all()
-    return render_template('stocks/stocks.html', stocks=stocks)
+
+    current_account_value = 0.0
+    for stock in stocks:
+        stock.get_stock_data()
+        database.session.add(stock)
+        current_account_value += stock.get_stock_position_value()
+
+    database.session.commit()
+    return render_template('stocks/stocks.html', stocks=stocks, value=round(current_account_value, 2))
 
 @stocks_blueprint.route('/add_stock', methods=['GET', 'POST'])
 @login_required
@@ -104,4 +112,5 @@ def create(symbol, number_of_shares, purchase_price):
     stock = Stock(symbol, number_of_shares, purchase_price)
     database.session.add(stock)
     database.session.commit()
+
 
