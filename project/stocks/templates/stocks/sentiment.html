@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Sentiment Analysis</title>
+</head>
+<body>
+    <h1>Stock Sentiment Analysis</h1>
+    <form method="POST">
+        <label for="stock_symbol">Enter Stock Symbol:</label>
+        <input type="text" id="stock_symbol" name="stock_symbol" required>
+        <button type="submit">Analyze</button>
+    </form>
+
+    {% if sentiment_results %}
+        <h2>Sentiment Analysis for {{ stock_symbol }}</h2>
+        <p>Positive: {{ sentiment_results.positive }}</p>
+        <p>Neutral: {{ sentiment_results.neutral }}</p>
+        <p>Negative: {{ sentiment_results.negative }}</p>
+
+        <h3>Recent Headlines:</h3>
+        <ul>
+            {% for headline in headlines %}
+                <li>{{ headline }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</body>
+</html>

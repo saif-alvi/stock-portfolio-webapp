@@ -1,11 +1,13 @@
 from . import stocks_blueprint
-from flask import current_app, render_template, request, session, flash, redirect, url_for
+from flask import current_app, render_template, request, session, flash, redirect, url_for, abort
 from pydantic import BaseModel, field_validator, ValidationError
 from project.models import Stock
 from project import database
 import click
 from flask_login import login_required, current_user
 from datetime import datetime
+from textblob import TextBlob
+import requests
 from flask import render_template, request, redirect, url_for, flash, current_app, abort
 
 
@@ -88,6 +90,41 @@ def add_stock():
             print(e)
 
     return render_template('stocks/add_stock.html')
+
+
+@stocks_blueprint.route('/sentiment', methods=['GET', 'POST'])
+def stock_sentiment():
+    if request.method == 'POST':
+        stock_symbol = request.form.get('stock_symbol')
+        if not stock_symbol:
+            flash("Please enter a stock symbol.", "error")
+            return render_template('stocks/sentiment.html')
+
+        # Fetch news headlines using a news API
+        api_key = "8d2a9f1f40e44ef4813906d92a3827d9"  # Replace with your NewsAPI key
+        url = f"https://newsapi.org/v2/everything?q={stock_symbol}&apiKey={api_key}"
+        response = requests.get(url)
+        if response.status_code != 200:
+            flash("Failed to fetch news. Please try again later.", "error")
+            return render_template('stocks/sentiment.html')
+
+        news_data = response.json()
+        headlines = [article['title'] for article in news_data.get('articles', [])]
+
+        # Perform sentiment analysis
+        sentiment_results = {"positive": 0, "neutral": 0, "negative": 0}
+        for headline in headlines:
+            analysis = TextBlob(headline)
+            if analysis.sentiment.polarity > 0:
+                sentiment_results["positive"] += 1
+            elif analysis.sentiment.polarity == 0:
+                sentiment_results["neutral"] += 1
+            else:
+                sentiment_results["negative"] += 1
+
+        return render_template('stocks/sentiment.html', stock_symbol=stock_symbol, sentiment_results=sentiment_results, headlines=headlines)
+
+    return render_template('stocks/sentiment.html')
 
 
 #------------------CLI COMMANDS-------------------------------------------
